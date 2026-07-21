@@ -1,46 +1,40 @@
-// pipeline {
-//     agent { dockerfile true }
-
-//     environment {
-//         // Define your Docker Hub registry repository name
-//         IMAGE_NAME = "venomlives19/my-app"
-//     }
-
-//     stages {
-//         stage('Checkout Code') {
-//             steps {
-//                 // Pulls code containing the Dockerfile from source control
-//                 checkout scm 
-//             }
-//         }
-
-//         stage('Build Docker Image') {
-//             steps {
-//                 // Runs standard docker build command targeting the current directory
-//                 sh "docker build -t ${IMAGE_NAME}:${env.BUILD_ID} ."
-//             }
-//         }
-//     }
-// }
-
 pipeline {
-    agent any 
-    environment {
-        // Define your registry credentials and target image name
-        IMAGE_NAME = 'venomlives19/my-app-image'
-    }
+    agent any
+
     stages {
-        stage('Checkout Code') {
+
+        stage('Checkout') {
             steps {
                 checkout scm
             }
         }
+
         stage('Build Docker Image') {
             steps {
-                script {
-                    // Builds the Dockerfile found in the current workspace directory
-                    // Tags the image with the unique Jenkins build number
-                    customImage = docker.build("${IMAGE_NAME}:${BUILD_NUMBER}", ".")
+                sh 'docker build -t myapp .'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform init'
+                }
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform validate'
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform apply -auto-approve'
                 }
             }
         }
