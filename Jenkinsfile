@@ -1,5 +1,5 @@
 pipeline {
-    agent { dockerfile true }
+    agent 
 
     environment {
         // Define your Docker Hub registry repository name
