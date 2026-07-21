@@ -1,7 +1,7 @@
-FROM ubuntu:20.04
-COPY . .
-RUN apt-get update && apt-get install -y python3 python3-pip
-RUN pip3 install flask
+FROM python:3.11-slim
+COPY requirements.txt .
+COPY app /
+RUN pip install --no-cache-dir -r requirements.txt
 ENV PORT=8080
 EXPOSE 8080
-CMD ["python3", "/app/hello.py"]
+CMD ["python3", "hello.py"]
