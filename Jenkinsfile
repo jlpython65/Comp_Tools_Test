@@ -1,41 +1,23 @@
 pipeline {
-    agent any
+    agent { dockerfile true }
+
+    environment {
+        // Define your Docker Hub registry repository name
+        IMAGE_NAME = "venomlives19/my-app"
+    }
 
     stages {
-
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                checkout scm
+                // Pulls code containing the Dockerfile from source control
+                checkout scm 
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t myapp .'
-            }
-        }
-
-        stage('Terraform Init') {
-            steps {
-                dir('terraform') {
-                    sh 'terraform init'
-                }
-            }
-        }
-
-        stage('Terraform Validate') {
-            steps {
-                dir('terraform') {
-                    sh 'terraform validate'
-                }
-            }
-        }
-
-        stage('Terraform Apply') {
-            steps {
-                dir('terraform') {
-                    sh 'terraform apply -auto-approve'
-                }
+                // Runs standard docker build command targeting the current directory
+                sh "docker build -t ${IMAGE_NAME}:${env.BUILD_ID} ."
             }
         }
     }
