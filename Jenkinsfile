@@ -1,5 +1,5 @@
 pipeline {
-    agent { dockerfile true }
+    agent any
 
     environment {
         // Define your Docker Hub registry repository name
@@ -16,8 +16,6 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'node --version'
-                sh 'svn --version'
                 // Runs standard docker build command targeting the current directory
                 sh "docker build -t ${IMAGE_NAME}:${env.BUILD_ID} ."
             }
