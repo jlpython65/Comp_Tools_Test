@@ -1,20 +1,23 @@
 pipeline {
     agent any
 
+    environment {
+        // Define your Docker Hub registry repository name
+        IMAGE_NAME = "venomlives19/my-app"
+    }
+
     stages {
-        stage('Build') {
+        stage('Checkout Code') {
             steps {
-                echo 'Building..'
+                // Pulls code containing the Dockerfile from source control
+                checkout scm 
             }
         }
-        stage('Test') {
+
+        stage('Build Docker Image') {
             steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
+                // Runs standard docker build command targeting the current directory
+                sh "docker build -t ${IMAGE_NAME}:${env.BUILD_ID} ."
             }
         }
     }
